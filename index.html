@@ -1,715 +1,412 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>动漫之家 - 在线看番网站</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-        }
-        
-        body {
-            background-color: #0f1419;
-            color: #e0e0e0;
-            line-height: 1.6;
-        }
-        
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* 导航栏样式 */
-        header {
-            background-color: #1a1f2e;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff6b9c;
-        }
-        
-        .logo i {
-            margin-right: 10px;
-            font-size: 28px;
-        }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-        
-        .nav-links li {
-            margin-left: 25px;
-        }
-        
-        .nav-links a {
-            font-size: 16px;
-            transition: color 0.3s;
-            padding: 5px 0;
-            position: relative;
-        }
-        
-        .nav-links a:hover {
-            color: #ff6b9c;
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: #ff6b9c;
-            transition: width 0.3s;
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-        
-        .search-box {
-            display: flex;
-            align-items: center;
-            background: #2a3040;
-            border-radius: 20px;
-            padding: 8px 15px;
-            width: 250px;
-        }
-        
-        .search-box input {
-            background: transparent;
-            border: none;
-            outline: none;
-            color: #e0e0e0;
-            width: 100%;
-            margin-left: 8px;
-        }
-        
-        .search-box i {
-            color: #8a8f9d;
-        }
-        
-        .user-actions {
-            display: flex;
-            align-items: center;
-        }
-        
-        .login-btn, .register-btn {
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-        
-        .login-btn {
-            background: transparent;
-            border: 1px solid #ff6b9c;
-            color: #ff6b9c;
-            margin-right: 10px;
-        }
-        
-        .login-btn:hover {
-            background: rgba(255, 107, 156, 0.1);
-        }
-        
-        .register-btn {
-            background: #ff6b9c;
-            color: white;
-            border: none;
-        }
-        
-        .register-btn:hover {
-            background: #ff4d8d;
-            box-shadow: 0 4px 12px rgba(255, 107, 156, 0.3);
-        }
-        
-        /* 轮播图样式 */
-        .banner {
-            margin-top: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            height: 400px;
-            position: relative;
-        }
-        
-        .banner-slide {
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: flex-end;
-            padding: 30px;
-            position: relative;
-        }
-        
-        .banner-slide::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to top, rgba(15, 20, 25, 0.9), transparent);
-        }
-        
-        .banner-content {
-            position: relative;
-            z-index: 2;
-            max-width: 600px;
-        }
-        
-        .banner-content h2 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: white;
-        }
-        
-        .banner-content p {
-            margin-bottom: 15px;
-            color: #cccccc;
-        }
-        
-        .watch-btn {
-            display: inline-block;
-            background: #ff6b9c;
-            color: white;
-            padding: 10px 25px;
-            border-radius: 5px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-        
-        .watch-btn:hover {
-            background: #ff4d8d;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(255, 107, 156, 0.4);
-        }
-        
-        /* 分类区域样式 */
-        .section-title {
-            font-size: 24px;
-            margin: 40px 0 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #ff6b9c;
-            display: inline-block;
-        }
-        
-        .categories {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .category {
-            background: #1a1f2e;
-            padding: 8px 20px;
-            border-radius: 20px;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        
-        .category:hover, .category.active {
-            background: #ff6b9c;
-            color: white;
-        }
-        
-        /* 动漫卡片样式 */
-        .anime-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 25px;
-            margin-bottom: 50px;
-        }
-        
-        .anime-card {
-            background: #1a1f2e;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-        }
-        
-        .anime-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-        }
-        
-        .anime-cover {
-            width: 100%;
-            height: 280px;
-            object-fit: cover;
-        }
-        
-        .anime-info {
-            padding: 15px;
-        }
-        
-        .anime-title {
-            font-size: 16px;
-            margin-bottom: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .anime-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #8a8f9d;
-        }
-        
-        /* 页脚样式 */
-        footer {
-            background: #1a1f2e;
-            padding: 40px 0 20px;
-            margin-top: 50px;
-        }
-        
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            margin-bottom: 30px;
-        }
-        
-        .footer-column {
-            flex: 1;
-            min-width: 200px;
-            margin-bottom: 20px;
-        }
-        
-        .footer-column h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: #ff6b9c;
-        }
-        
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-links a:hover {
-            color: #ff6b9c;
-        }
-        
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            background: #2a3040;
-            border-radius: 50%;
-            transition: all 0.3s;
-        }
-        
-        .social-links a:hover {
-            background: #ff6b9c;
-            transform: translateY(-3px);
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #2a3040;
-            color: #8a8f9d;
-            font-size: 14px;
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 992px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .search-box {
-                width: 200px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .banner {
-                height: 300px;
-            }
-            
-            .banner-content h2 {
-                font-size: 24px;
-            }
-            
-            .anime-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-            
-            .anime-cover {
-                height: 220px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .search-box {
-                display: none;
-            }
-            
-            .user-actions {
-                display: none;
-            }
-            
-            .banner {
-                height: 250px;
-            }
-            
-            .banner-content {
-                padding: 15px;
-            }
-            
-            .banner-content h2 {
-                font-size: 20px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- 导航栏 -->
-    <header>
-        <div class="container">
-            <nav class="navbar">
-                <a href="#" class="logo">
-                    <i class="fas fa-play-circle"></i>
-                    动漫之家
-                </a>
-                
-                <ul class="nav-links">
-                    <li><a href="#">首页</a></li>
-                    <li><a href="#">番剧</a></li>
-                    <li><a href="#">电影</a></li>
-                    <li><a href="#">排行榜</a></li>
-                    <li><a href="#">新番</a></li>
-                    <li><a href="#">完结</a></li>
-                </ul>
-                
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="搜索动漫...">
-                </div>
-                
-                <div class="user-actions">
-                    <a href="#" class="login-btn">登录</a>
-                    <a href="#" class="register-btn">注册</a>
-                </div>
-            </nav>
-        </div>
-    </header>
+<template>
+  <div id="app">
+    <!-- 购物车空状态提示 -->
+    <div v-if="isCartEmpty" class="empty-cart">
+      <h2>购物车为空</h2>
+      <p>请选择需要购买的早餐~</p >
+    </div>
 
-    <!-- 主要内容 -->
-    <main class="container">
-        <!-- 轮播图 -->
-        <div class="banner">
-            <div class="banner-slide" style="background-image: url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
-                <div class="banner-content">
-                    <h2>鬼灭之刃 游郭篇</h2>
-                    <p>炭治郎与音柱·宇髄天元一同前往游郭，与上弦之陆展开激烈战斗...</p>
-                    <a href="#" class="watch-btn">立即观看</a>
-                </div>
-            </div>
-        </div>
+    <!-- 图片预览弹窗（默认隐藏） -->
+    <div v-if="showImageModal" class="image-modal" @click="closeImageModal">
+      <div class="modal-content" @click.stop>
+        <span class="close-btn" @click="closeImageModal">&times;</span>
+        < img :src="currentImageUrl" :alt="currentImageName" class="preview-image">
+      </div>
+    </div>
 
-        <!-- 分类区域 -->
-        <h2 class="section-title">热门分类</h2>
-        <div class="categories">
-            <div class="category active">全部</div>
-            <div class="category">热血</div>
-            <div class="category">冒险</div>
-            <div class="category">恋爱</div>
-            <div class="category">科幻</div>
-            <div class="category">搞笑</div>
-            <div class="category">悬疑</div>
-            <div class="category">奇幻</div>
-            <div class="category">运动</div>
-            <div class="category">治愈</div>
-        </div>
+    <!-- 菜单表格（新增“查看图片”列） -->
+    <table border="1" align="center" width="1200" class="menu-table">
+      <caption>
+        <h2>小高早餐店</h2>
+      </caption>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>名称</th>
+          <th>价格</th>
+          <th>数量</th>
+          <th>合计</th>
+          <th>查看图片</th> <!-- 新增列标题 -->
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 1. 肠粉米粉类 -->
+        <tr class="category-title">
+          <td colspan="6">肠粉米粉类</td> <!-- 列数从5改为6 -->
+        </tr>
+        <tr v-for="item in categoryData.vermicelli" :key="item.id" align="center" class="menu-item">
+          <td>{{ item.id }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ filter(item.price) }}</td>
+          <td>
+            <button @click="decrement(item.id)" :disabled="item.count <= 0" class="btn">-</button>
+            {{ item.count }}
+            <button @click="increment(item.id)" class="btn">+</button>
+          </td>
+          <td>{{ filter(item.count * item.price) }}</td>
+          <!-- 新增：查看图片按钮 -->
+          <td>
+            <button @click="openImageModal(item.imageUrl, item.name)" class="image-btn">
+              查看图片
+            </button>
+          </td>
+        </tr>
 
-        <!-- 推荐动漫 -->
-        <h2 class="section-title">热门推荐</h2>
-        <div class="anime-grid">
-            <!-- 动漫卡片1 -->
-            <div class="anime-card">
-                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="鬼灭之刃" class="anime-cover">
-                <div class="anime-info">
-                    <h3 class="anime-title">鬼灭之刃 游郭篇</h3>
-                    <div class="anime-meta">
-                        <span>2022</span>
-                        <span>9.8分</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 动漫卡片2 -->
-            <div class="anime-card">
-                <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="咒术回战" class="anime-cover">
-                <div class="anime-info">
-                    <h3 class="anime-title">咒术回战 第二季</h3>
-                    <div class="anime-meta">
-                        <span>2023</span>
-                        <span>9.7分</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 动漫卡片3 -->
-            <div class="anime-card">
-                <img src="https://images.unsplash.com/photo-1541562232579-512a21360020?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="进击的巨人" class="anime-cover">
-                <div class="anime-info">
-                    <h3 class="anime-title">进击的巨人 最终季</h3>
-                    <div class="anime-meta">
-                        <span>2022</span>
-                        <span>9.9分</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 动漫卡片4 -->
-            <div class="anime-card">
-                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="间谍过家家" class="anime-cover">
-                <div class="anime-info">
-                    <h3 class="anime-title">间谍过家家 第二季</h3>
-                    <div class="anime-meta">
-                        <span>2023</span>
-                        <span>9.6分</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 动漫卡片5 -->
-            <div class="anime-card">
-                <img src="https://images.unsplash.com/photo-1639322537504-6427a81d0e60?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="海贼王" class="anime-cover">
-                <div class="anime-info">
-                    <h3 class="anime-title">海贼王 和之国篇</h3>
-                    <div class="anime-meta">
-                        <span>2023</span>
-                        <span>9.5分</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 动漫卡片6 -->
-            <div class="anime-card">
-                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="电锯人" class="anime-cover">
-                <div class="anime-info">
-                    <h3 class="anime-title">电锯人</h3>
-                    <div class="anime-meta">
-                        <span>2022</span>
-                        <span>9.4分</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 动漫卡片7 -->
-            <div class="anime-card">
-                <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="孤独摇滚" class="anime-cover">
-                <div class="anime-info">
-                    <h3 class="anime-title">孤独摇滚！</h3>
-                    <div class="anime-meta">
-                        <span>2022</span>
-                        <span>9.7分</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 动漫卡片8 -->
-            <div class="anime-card">
-                <img src="https://images.unsplash.com/photo-1541562232579-512a21360020?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="莉可丽丝" class="anime-cover">
-                <div class="anime-info">
-                    <h3 class="anime-title">莉可丽丝</h3>
-                    <div class="anime-meta">
-                        <span>2022</span>
-                        <span>9.3分</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 新番动漫 -->
-        <h2 class="section-title">新番推荐</h2>
-        <div class="anime-grid">
-            <!-- 动漫卡片9 -->
-            <div class="anime-card">
-                <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="我推的孩子" class="anime-cover">
-                <div class="anime-info">
-                    <h3 class="anime-title">我推的孩子</h3>
-                    <div class="anime-meta">
-                        <span>2023</span>
-                        <span>9.8分</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 动漫卡片10 -->
-            <div class="anime-card">
-                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="地狱乐" class="anime-cover">
-                <div class="anime-info">
-                    <h3 class="anime-title">地狱乐</h3>
-                    <div class="anime-meta">
-                        <span>2023</span>
-                        <span>9.2分</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 动漫卡片11 -->
-            <div class="anime-card">
-                <img src="https://images.unsplash.com/photo-1541562232579-512a21360020?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="天国大魔境" class="anime-cover">
-                <div class="anime-info">
-                    <h3 class="anime-title">天国大魔境</h3>
-                    <div class="anime-meta">
-                        <span>2023</span>
-                        <span>9.5分</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 动漫卡片12 -->
-            <div class="anime-card">
-                <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="跃动青春" class="anime-cover">
-                <div class="anime-info">
-                    <h3 class="anime-title">跃动青春</h3>
-                    <div class="anime-meta">
-                        <span>2023</span>
-                        <span>9.6分</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+        <!-- 2. 包子馒头类 -->
+        <tr class="category-title">
+          <td colspan="6">包子馒头类</td> <!-- 列数从5改为6 -->
+        </tr>
+        <tr v-for="item in categoryData.buns" :key="item.id" align="center" class="menu-item">
+          <td>{{ item.id }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ filter(item.price) }}</td>
+          <td>
+            <button @click="decrement(item.id)" :disabled="item.count <= 0" class="btn">-</button>
+            {{ item.count }}
+            <button @click="increment(item.id)" class="btn">+</button>
+          </td>
+          <td>{{ filter(item.count * item.price) }}</td>
+          <!-- 新增：查看图片按钮 -->
+          <td>
+            <button @click="openImageModal(item.imageUrl, item.name)" class="image-btn">
+              查看图片
+            </button>
+          </td>
+        </tr>
 
-    <!-- 页脚 -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>动漫之家</h3>
-                    <p>致力于提供最新、最全、最高清的动漫在线观看服务，让您随时随地享受动漫的乐趣。</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-weibo"></i></a>
-                        <a href="#"><i class="fab fa-qq"></i></a>
-                        <a href="#"><i class="fab fa-weixin"></i></a>
-                        <a href="#"><i class="fab fa-bilibili"></i></a>
-                    </div>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>网站导航</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">首页</a></li>
-                        <li><a href="#">番剧</a></li>
-                        <li><a href="#">电影</a></li>
-                        <li><a href="#">排行榜</a></li>
-                        <li><a href="#">新番</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>帮助中心</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">用户反馈</a></li>
-                        <li><a href="#">常见问题</a></li>
-                        <li><a href="#">联系我们</a></li>
-                        <li><a href="#">隐私政策</a></li>
-                        <li><a href="#">服务条款</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>联系我们</h3>
-                    <ul class="footer-links">
-                        <li><i class="fas fa-envelope"></i> contact@animehome.com</li>
-                        <li><i class="fas fa-phone"></i> 400-123-4567</li>
-                        <li><i class="fas fa-map-marker-alt"></i> 北京市朝阳区动漫大厦</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="copyright">
-                <p>© 2023 动漫之家 版权所有 | 本网站内容来源于网络，仅供学习交流使用</p>
-            </div>
-        </div>
-    </footer>
+        <!-- 3. 油炸点心类 -->
+        <tr class="category-title">
+          <td colspan="6">油炸点心类</td> <!-- 列数从5改为6 -->
+        </tr>
+        <tr v-for="item in categoryData.fried" :key="item.id" align="center" class="menu-item">
+          <td>{{ item.id }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ filter(item.price) }}</td>
+          <td>
+            <button @click="decrement(item.id)" :disabled="item.count <= 0" class="btn">-</button>
+            {{ item.count }}
+            <button @click="increment(item.id)" class="btn">+</button>
+          </td>
+          <td>{{ filter(item.count * item.price) }}</td>
+          <!-- 新增：查看图片按钮 -->
+          <td>
+            <button @click="openImageModal(item.imageUrl, item.name)" class="image-btn">
+              查看图片
+            </button>
+          </td>
+        </tr>
 
-    <script>
-        // 简单的交互效果
-        document.addEventListener('DOMContentLoaded', function() {
-            // 分类点击效果
-            const categories = document.querySelectorAll('.category');
-            categories.forEach(category => {
-                category.addEventListener('click', function() {
-                    categories.forEach(c => c.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-            
-            // 搜索框聚焦效果
-            const searchInput = document.querySelector('.search-box input');
-            const searchBox = document.querySelector('.search-box');
-            
-            searchInput.addEventListener('focus', function() {
-                searchBox.style.boxShadow = '0 0 0 2px rgba(255, 107, 156, 0.5)';
-            });
-            
-            searchInput.addEventListener('blur', function() {
-                searchBox.style.boxShadow = 'none';
-            });
-            
-            // 动漫卡片悬停效果增强
-            const animeCards = document.querySelectorAll('.anime-card');
-            animeCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.zIndex = '10';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.zIndex = '1';
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+        <!-- 4. 蒸制点心类 -->
+        <tr class="category-title">
+          <td colspan="6">其他类</td> <!-- 列数从5改为6 -->
+        </tr>
+        <tr v-for="item in categoryData.steamed" :key="item.id" align="center" class="menu-item">
+          <td>{{ item.id }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ filter(item.price) }}</td>
+          <td>
+            <button @click="decrement(item.id)" :disabled="item.count <= 0" class="btn">-</button>
+            {{ item.count }}
+            <button @click="increment(item.id)" class="btn">+</button>
+          </td>
+          <td>{{ filter(item.count * item.price) }}</td>
+          <!-- 新增：查看图片按钮 -->
+          <td>
+            <button @click="openImageModal(item.imageUrl, item.name)" class="image-btn">
+              查看图片
+            </button>
+          </td>
+        </tr>
+
+        <!-- 总价格行 -->
+        <tr class="total-row">
+          <td colspan="3">总价格</td> <!-- 列数从2改为3，适配新增列 -->
+          <td colspan="3">{{ filter(totalPrice) }}</td> <!-- 列数从3改为3 -->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>
+
+<script>
+import { computed, reactive, toRefs, ref } from 'vue';
+
+export default {
+  setup() {
+    const state = reactive({
+      // 原有菜品数据：为每个菜品新增 imageUrl 字段（替换为你的实际图片链接）
+      books: [
+        { id: 1, name: '蛋肠', price: 5, count: 0, imageUrl: 'https://img0.baidu.com/it/u=3698293611,1093082168&fm=253&app=138&f=JPEG?w=800&h=1067' },
+        { id: 2, name: '肉肠', price: 5, count: 0, imageUrl: 'https://qcloud.dpfile.com/pc/6xFk0w7ynihK9H8D43fhE0uUtgZqhsVhj8BwXCmx2pXilxcLF3tBS7MeP88pCKDF.jpg' },
+        { id: 3, name: '蛋肉肠', price: 6, count: 0, imageUrl: 'https://qcloud.dpfile.com/pc/n2FRFRt1Rcm5QGUddFqiqiE1UDxmNF8Una0HkRSmlDDIwZSW9T2FURdfiDigPDjsAsjew4BovU6axjPJM2w4nrGzA5roSQdOIZBdpbY56uQFaWqA0j7ta3_A22czT6CvR2wBLHpNWleM8u_F-3h0csaq1-bq6jn4ci07g10pOcR8r-pAC7Z8Me1lmvv-C1rCtuD2Ttc33o2oiy9iGY5KAqS8eU1WRISyVZ5oaCuzdo9GQLj2BUn2Fvl5kTJ57OrBF71mYN0a8QgyjWdwktTu-cUDnOwi2G9h3CwlmvUeT-6IX1x8IcdC5UUwH5RqfLIsE1sgoF6okCnFfXl9rBAvz8FnowZYK4ceX3OVbVyN7CvkdLPtM7Qhu-5cOXcgfglxkzNIfpCrIG6E8pGjNbWE8nXbFwGNjZo9c9Z6Vy4CHQ7qtJlzaLV2abhdoP7WVQK3Ef4oG-QCuFbBACo7HPEn7Xr70gCcopIf4ISpYtgJUFc5koQbR7qtYnjgb4nKg60IngjvItjm2Pi9k9HGxctJL3iwTu_9PoM68-B3FwT_ZzXTtMzAm9Ao1OzMu6UzwwhDcnevFMP8gjC5vn_-sW8cW1E6ydPph68pn_IBwOnU5FwwXQKcVMr19MQGdAcvTpBH.jpg' },
+        { id: 4, name: '蛋蒸米粉', price: 5, count: 0, imageUrl: 'https://p3.ssl.qhimgs3.com/t01849f92b8f9b57700.jpg' },
+        { id: 5, name: '肉蒸米粉', price: 5, count: 0, imageUrl: 'https://pic.rmb.bdstatic.com/bjh/bc114086c2ed/250104/8dcd0ad83c683ea25c5762384dc1df42.jpeg' },
+        { id: 6, name: '蛋肉蒸米粉', price: 6, count: 0, imageUrl: 'https://p3.ssl.qhimgs3.com/t018650132c0c521bd0.jpg' },
+        { id: 7, name: '豆浆', price: 1, count: 0, imageUrl: 'https://img0.baidu.com/it/u=3013447886,3799195658&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500' },
+        { id: 8, name: '肉包', price: 1, count: 0, imageUrl: 'https://img2.baidu.com/it/u=3977671838,3753812547&fm=253&fmt=auto&app=138&f=JPEG?w=474&h=349' },
+        { id: 9, name: '奶黄包', price: 1, count: 0, imageUrl: 'https://img0.baidu.com/it/u=2064741680,3352874177&fm=253&fmt=auto&app=138&f=JPEG?w=514&h=500' },
+        { id: 10, name: '豆沙包', price: 1, count: 0, imageUrl: 'https://img1.baidu.com/it/u=3982667304,1045340826&fm=253&fmt=auto&app=138&f=JPEG?w=749&h=500' },
+        { id: 11, name: '小叉烧', price: 1, count: 0, imageUrl: 'https://img1.baidu.com/it/u=1108952272,220860491&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=750' },
+        { id: 12, name: '玉米馒头', price: 1.5, count: 0, imageUrl: 'https://img1.baidu.com/it/u=620444440,1592530087&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=1422' },
+        { id: 13, name: '白馒头', price: 1, count: 0, imageUrl: 'https://img2.baidu.com/it/u=3260418036,2192354684&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=800' },
+        { id: 14, name: '油条', price: 1.5, count: 0, imageUrl: 'https://img1.baidu.com/it/u=2660425692,1325656697&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=1067' },
+        { id: 15, name: '烧麦1个', price: 1.5, count: 0, imageUrl: 'https://img2.baidu.com/it/u=4204884914,2340536938&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=750' },
+        { id: 16, name: '大麻球', price: 1.5, count: 0, imageUrl: 'https://img0.baidu.com/it/u=4214926451,1134822666&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=1134' },
+        { id: 17, name: '韭菜盒子', price: 2, count: 0, imageUrl: 'https://img0.baidu.com/it/u=551334522,92978835&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=1112' },
+        { id: 18, name: '核桃包', price: 2, count: 0, imageUrl: 'https://img1.baidu.com/it/u=2245687156,1327193369&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=667' },
+        { id: 19, name: '马拉糕', price: 2, count: 0, imageUrl: 'https://img0.baidu.com/it/u=864632,1350493132&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500' },
+        { id: 20, name: '糯米卷', price: 2, count: 0, imageUrl: 'https://img2.baidu.com/it/u=1215098710,3262177447&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=822' },
+        { id: 21, name: '大叉烧包', price: 2.5, count: 0, imageUrl: 'https://img1.baidu.com/it/u=1651637451,3087209562&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=667' },
+        { id: 22, name: '燕麦包', price: 2.5, count: 0, imageUrl: 'https://img0.baidu.com/it/u=2293612478,288556321&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500' },
+        { id: 23, name: '火腿包', price: 2, count: 0, imageUrl: 'https://img2.baidu.com/it/u=3645896860,1855599834&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=667' },
+        { id: 24, name: '糯米鸡', price: 3, count: 0, imageUrl: 'https://img1.baidu.com/it/u=2327322043,467054760&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500' },
+        { id: 25, name: '小笼包', price: 5, count: 0, imageUrl: 'https://img2.baidu.com/it/u=1664680557,840170666&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=1069' },
+        { id: 26, name: '玉米蒸饺', price: 5, count: 0, imageUrl: 'https://img1.baidu.com/it/u=438002787,300544075&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=666' },
+        { id: 27, name: '水晶包', price: 6, count: 0, imageUrl: 'https://img2.baidu.com/it/u=2688165417,2087619369&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500' },
+        { id: 28, name: '糯米烧麦4个', price: 6, count: 0, imageUrl: 'https://img2.baidu.com/it/u=4204884914,2340536938&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=750' }
+      ]
+    });
+
+    // 新增：图片预览相关状态
+    const showImageModal = ref(false); // 弹窗显示/隐藏
+    const currentImageUrl = ref(''); // 当前预览图片地址
+    const currentImageName = ref(''); // 当前预览图片名称
+
+    // 分类处理（保持不变）
+    const categoryData = computed(() => ({
+      vermicelli: state.books.filter(item =>
+        item.name.includes('肠') || item.name.includes('米粉')
+      ),
+      buns: state.books.filter(item =>
+        item.name.includes('包') || item.name.includes('馒头')
+      ),
+      fried: state.books.filter(item =>
+        ['大油条', '大麻球', '韭菜盒子'].includes(item.name)
+      ),
+      steamed: state.books.filter(item =>
+        item.name.includes('饺子') || ['糯米鸡', '糯米卷', '马拉糕', '糯米烧麦','豆浆'].includes(item.name)
+      )
+    }));
+
+    // 购物车空状态判断（保持不变）
+    const isCartEmpty = computed(() => {
+      return state.books.every(item => item.count === 0);
+    });
+
+    // 总价格计算（保持不变）
+    const totalPrice = computed(() => {
+      return state.books.reduce((sum, item) => {
+        return sum + item.price * item.count;
+      }, 0);
+    });
+
+    // 数量增减（保持不变）
+    const increment = (id) => {
+      const item = state.books.find(item => item.id === id);
+      if (item) item.count++;
+    };
+
+    const decrement = (id) => {
+      const item = state.books.find(item => item.id === id);
+      if (item && item.count > 0) item.count--;
+    };
+
+    // 价格格式化（保持不变）
+    const filter = (price) => {
+      return `¥${price.toFixed(2)}`;
+    };
+
+    // 新增：打开图片预览弹窗
+    const openImageModal = (url, name) => {
+      currentImageUrl.value = url;
+      currentImageName.value = name;
+      showImageModal.value = true;
+      // 打开弹窗时禁止页面滚动
+      document.body.style.overflow = 'hidden';
+    };
+
+    // 新增：关闭图片预览弹窗
+    const closeImageModal = () => {
+      showImageModal.value = false;
+      currentImageUrl.value = '';
+      currentImageName.value = '';
+      // 关闭弹窗时恢复页面滚动
+      document.body.style.overflow = '';
+    };
+
+    return {
+      ...toRefs(state),
+      categoryData,
+      isCartEmpty,
+      totalPrice,
+      increment,
+      decrement,
+      filter,
+      // 新增：图片预览相关方法和状态
+      showImageModal,
+      currentImageUrl,
+      currentImageName,
+      openImageModal,
+      closeImageModal
+    };
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+#app {
+  background-color: #fff;
+  min-height: 100vh;
+  padding: 20px 0;
+  font-family: Arial, sans-serif;
+}
+
+.empty-cart {
+  text-align: center;
+  color: #666;
+  padding: 50px 0;
+}
+
+.empty-cart h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.empty-cart p {
+  font-size: 16px;
+  color: #999;
+}
+
+.menu-table {
+  border-collapse: collapse;
+  margin: 20px auto;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.menu-table caption h2 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 22px;
+}
+
+.menu-table th,
+.menu-table td {
+  border: 1px solid #eee;
+  padding: 12px 8px;
+  color: #333;
+  font-size: 14px;
+}
+
+.menu-table thead tr {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.category-title {
+  background-color: #e8f4f8;
+  font-weight: bold;
+  color: #2c7fb8;
+  text-align: left;
+  padding-left: 20px;
+}
+
+.category-title td {
+  padding: 8px 20px;
+  font-size: 15px;
+}
+
+.menu-item:hover {
+  background-color: #fafafa;
+}
+
+.btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 4px;
+  background-color: #42b983;
+  color: #fff;
+  cursor: pointer;
+  margin: 0 8px;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.total-row {
+  background-color: #fff8e6;
+  font-weight: bold;
+}
+
+.total-row td {
+  color: #e67e22;
+  font-size: 15px;
+}
+
+/* 新增：查看图片按钮样式 */
+.image-btn {
+  border: none;
+  border-radius: 4px;
+  background-color: #2c7fb8;
+  color: #fff;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.image-btn:hover {
+  background-color: #1e6aa3;
+}
+
+/* 新增：图片预览弹窗样式 */
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  /* 确保弹窗在最上层 */
+}
+
+.modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 8px;
+  object-fit: contain;
+  /* 保持图片比例，不拉伸 */
+}
+
+.close-btn {
+  position: absolute;
+  top: -30px;
+  right: 0;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #ccc;
+}
+</style>
