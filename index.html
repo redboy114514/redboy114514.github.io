@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>贪吃蛇游戏</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>贪吃蛇游戏 - 电脑手机通用</title>
     <!-- 引入Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入Font Awesome -->
@@ -42,6 +42,11 @@
             .screen-transition {
                 transition: opacity 0.3s ease, visibility 0.3s ease;
             }
+            .control-btn {
+                @apply flex items-center justify-center rounded-full bg-primary/30 active:bg-primary/60 
+                       shadow-lg active:shadow-primary/50 transition-all duration-150
+                       touch-manipulation select-none;
+            }
             @keyframes pulse {
                 0%, 100% {
                     opacity: 1;
@@ -56,27 +61,27 @@
     <!-- 导入游戏字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gradient-to-br from-dark to-slate-800 min-h-screen text-white flex flex-col items-center justify-center p-4 font-game">
+<body class="bg-gradient-to-br from-dark to-slate-800 min-h-screen text-white flex flex-col items-center justify-start p-4 font-game">
     <div class="max-w-3xl w-full mx-auto">
         <!-- 游戏标题 -->
-        <h1 class="text-[clamp(1.5rem,5vw,2.5rem)] text-center mb-6 text-primary pulse-animation">贪吃蛇游戏</h1>
+        <h1 class="text-[clamp(1.2rem,5vw,2rem)] text-center my-4 text-primary pulse-animation">贪吃蛇游戏</h1>
         
         <!-- 游戏信息区域 -->
-        <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
-            <div class="bg-slate-700/50 px-4 py-2 rounded-lg flex items-center gap-2">
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
+            <div class="bg-slate-700/50 px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm sm:text-base">
                 <i class="fa fa-star text-yellow-400"></i>
                 <span>分数: <span id="score" class="text-primary">0</span></span>
             </div>
-            <div class="bg-slate-700/50 px-4 py-2 rounded-lg flex items-center gap-2">
+            <div class="bg-slate-700/50 px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm sm:text-base">
                 <i class="fa fa-trophy text-yellow-500"></i>
                 <span>最高分: <span id="highScore" class="text-primary">0</span></span>
             </div>
             <div class="flex gap-2">
-                <button id="startBtn" class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                <button id="startBtn" class="bg-primary hover:bg-primary/80 text-white px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 text-sm">
                     <i class="fa fa-play"></i>
                     <span>开始</span>
                 </button>
-                <button id="pauseBtn" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2" disabled>
+                <button id="pauseBtn" class="bg-slate-600 hover:bg-slate-500 text-white px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 text-sm" disabled>
                     <i class="fa fa-pause"></i>
                     <span>暂停</span>
                 </button>
@@ -89,25 +94,53 @@
             
             <!-- 游戏开始提示 -->
             <div id="startScreen" class="absolute inset-0 flex flex-col items-center justify-center bg-dark/80 rounded-lg screen-transition">
-                <p class="text-xl mb-6 text-center px-4">按<span class="text-primary">开始</span>按钮开始游戏</p>
-                <p class="text-sm text-slate-400 text-center px-4">使用方向键控制蛇的移动</p>
+                <p class="text-lg sm:text-xl mb-4 text-center px-4">按<span class="text-primary">开始</span>按钮开始游戏</p>
+                <p class="text-xs sm:text-sm text-slate-400 text-center px-4">
+                    电脑: 方向键控制<br>
+                    手机: 触摸虚拟按键
+                </p>
             </div>
             
             <!-- 游戏结束提示 -->
             <div id="gameOverScreen" class="absolute inset-0 flex flex-col items-center justify-center bg-dark/80 rounded-lg screen-transition opacity-0 invisible">
-                <p class="text-2xl mb-2 text-secondary">游戏结束!</p>
-                <p class="text-xl mb-4">你的分数: <span id="finalScore">0</span></p>
+                <p class="text-xl sm:text-2xl mb-2 text-secondary">游戏结束!</p>
+                <p class="text-base sm:text-xl mb-4">你的分数: <span id="finalScore">0</span></p>
                 <button id="restartBtn" class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105">
                     再来一局
                 </button>
             </div>
         </div>
         
+        <!-- 移动设备虚拟按键 (仅在小屏幕显示) -->
+        <div class="mt-6 md:hidden">
+            <div class="flex justify-center mb-2">
+                <!-- 上键 -->
+                <button id="upBtn" class="control-btn w-16 h-16 text-xl">
+                    <i class="fa fa-arrow-up"></i>
+                </button>
+            </div>
+            <div class="flex justify-center gap-2">
+                <!-- 左键 -->
+                <button id="leftBtn" class="control-btn w-16 h-16 text-xl">
+                    <i class="fa fa-arrow-left"></i>
+                </button>
+                <!-- 下键 -->
+                <button id="downBtn" class="control-btn w-16 h-16 text-xl">
+                    <i class="fa fa-arrow-down"></i>
+                </button>
+                <!-- 右键 -->
+                <button id="rightBtn" class="control-btn w-16 h-16 text-xl">
+                    <i class="fa fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+        
         <!-- 游戏说明 -->
-        <div class="mt-6 bg-slate-700/30 p-4 rounded-lg text-sm">
+        <div class="mt-6 bg-slate-700/30 p-3 rounded-lg text-xs sm:text-sm">
             <h2 class="text-primary mb-2">游戏说明:</h2>
             <ul class="list-disc pl-5 space-y-1">
-                <li>使用方向键 ↑ ↓ ← → 控制蛇的移动</li>
+                <li>电脑: 使用方向键 ↑ ↓ ← → 控制蛇的移动</li>
+                <li>手机: 触摸虚拟方向键控制蛇的移动</li>
                 <li>吃到红色食物，蛇会变长，分数增加</li>
                 <li>撞到墙壁或自己的身体，游戏结束</li>
                 <li>随着分数增加，蛇的移动速度会加快</li>
@@ -127,13 +160,20 @@
         const startScreen = document.getElementById('startScreen');
         const gameOverScreen = document.getElementById('gameOverScreen');
         const finalScoreElement = document.getElementById('finalScore');
+        // 虚拟按键
+        const upBtn = document.getElementById('upBtn');
+        const downBtn = document.getElementById('downBtn');
+        const leftBtn = document.getElementById('leftBtn');
+        const rightBtn = document.getElementById('rightBtn');
         
         // 设置Canvas尺寸
         function resizeCanvas() {
-            // 保持16:9的宽高比
+            // 获取容器宽度，考虑到移动设备的屏幕尺寸
             const containerWidth = canvas.parentElement.clientWidth;
+            // 在移动设备上使用更高的比例，使游戏区域更大
+            const ratio = window.innerWidth < 640 ? 0.9 : 0.75;
             const newWidth = containerWidth;
-            const newHeight = Math.floor(newWidth * 0.75); // 4:3比例
+            const newHeight = Math.floor(newWidth * ratio);
             
             canvas.width = 800; // 内部像素宽度
             canvas.height = 600; // 内部像素高度
@@ -424,6 +464,19 @@
             showScreen(gameOverScreen);
         }
         
+        // 处理方向控制
+        function setDirection(newDirection) {
+            // 防止180度转向
+            if (
+                (newDirection === 'up' && direction !== 'down') ||
+                (newDirection === 'down' && direction !== 'up') ||
+                (newDirection === 'left' && direction !== 'right') ||
+                (newDirection === 'right' && direction !== 'left')
+            ) {
+                nextDirection = newDirection;
+            }
+        }
+        
         // 处理键盘输入
         function handleKeyPress(e) {
             // 阻止按键滚动页面
@@ -431,27 +484,19 @@
                 e.preventDefault();
             }
             
-            // 方向控制 - 防止180度转向
+            // 方向控制
             switch (e.key) {
                 case 'ArrowUp':
-                    if (direction !== 'down') {
-                        nextDirection = 'up';
-                    }
+                    setDirection('up');
                     break;
                 case 'ArrowDown':
-                    if (direction !== 'up') {
-                        nextDirection = 'down';
-                    }
+                    setDirection('down');
                     break;
                 case 'ArrowLeft':
-                    if (direction !== 'right') {
-                        nextDirection = 'left';
-                    }
+                    setDirection('left');
                     break;
                 case 'ArrowRight':
-                    if (direction !== 'left') {
-                        nextDirection = 'right';
-                    }
+                    setDirection('right');
                     break;
                 case ' ': // 空格键暂停/继续
                     if (isGameRunning) {
@@ -468,6 +513,32 @@
         startBtn.addEventListener('click', startGame);
         pauseBtn.addEventListener('click', pauseGame);
         restartBtn.addEventListener('click', startGame);
+        
+        // 虚拟按键触摸事件
+        upBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // 防止触摸事件的默认行为
+            setDirection('up');
+        });
+        
+        downBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            setDirection('down');
+        });
+        
+        leftBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            setDirection('left');
+        });
+        
+        rightBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            setDirection('right');
+        });
+        
+        // 防止移动设备触摸时的页面缩放
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
         
         // 初始化显示
         initGame();
