@@ -48,19 +48,13 @@
                        shadow-lg active:shadow-player/50 transition-all duration-150
                        touch-manipulation select-none;
             }
-            .result-image {
-                max-width: 80%;
-                max-height: 60%;
-                object-fit: contain;
-                border-radius: 0.5rem;
-            }
-        }
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.7;
+            @keyframes pulse {
+                0%, 100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.7;
+                }
             }
         }
     </style>
@@ -106,16 +100,6 @@
                     玩家蛇: <span class="text-player">绿色</span> | 电脑蛇: <span class="text-ai">蓝色</span><br>
                     电脑蛇可穿墙，仅头部相撞时游戏结束
                 </p>
-            </div>
-            
-            <!-- 结算页面（游戏结束前弹出） -->
-            <div id="resultScreen" class="absolute inset-0 flex flex-col items-center justify-center bg-dark/80 rounded-lg screen-transition opacity-0 invisible">
-                <img id="resultImage" src="" alt="结算图片" class="result-image mb-4">
-                <p class="text-xl sm:text-2xl mb-2 text-food">结算分数</p>
-                <p class="text-base sm:text-xl mb-4">你的分数: <span id="resultScore">0</span></p>
-                <button id="toGameOverBtn" class="bg-player hover:bg-player/80 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105">
-                    查看结果
-                </button>
             </div>
             
             <!-- 游戏结束提示 -->
@@ -177,10 +161,6 @@
         const pauseBtn = document.getElementById('pauseBtn');
         const restartBtn = document.getElementById('restartBtn');
         const startScreen = document.getElementById('startScreen');
-        const resultScreen = document.getElementById('resultScreen');
-        const resultImage = document.getElementById('resultImage');
-        const resultScoreElement = document.getElementById('resultScore');
-        const toGameOverBtn = document.getElementById('toGameOverBtn');
         const gameOverScreen = document.getElementById('gameOverScreen');
         const finalPlayerScoreElement = document.getElementById('finalPlayerScore');
         const finalAiScoreElement = document.getElementById('finalAiScore');
@@ -225,6 +205,9 @@
         let gameTime = 0;           // 游戏运行时间(秒)
         let speedIncreaseInterval;  // 速度增加定时器
         
+        // 蛇的初始位置和大小
+        const gridSize = 20; // 网格大小
+        
         // 显示屏幕
         function showScreen(screenElement) {
             screenElement.classList.remove('opacity-0', 'invisible');
@@ -235,18 +218,6 @@
         function hideScreen(screenElement) {
             screenElement.classList.remove('opacity-100', 'visible');
             screenElement.classList.add('opacity-0', 'invisible');
-        }
-        
-        // 显示结算页面（根据分数选择图片）
-        function showResultScreen(score) {
-            resultScoreElement.textContent = score;
-            // 根据分数设置显示的图片
-            if (score >= 51) {
-                resultImage.src = '/redboy114514.github.io/user.png'; // 51分及以上显示user.png
-            } else {
-                resultImage.src = '/redboy114514.github.io/7.png';    // 0-50分显示7.png
-            }
-            showScreen(resultScreen);
         }
         
         // 初始化游戏
@@ -564,6 +535,8 @@
                 }
             }
             
+            // 不检查与电脑蛇身体的碰撞，只在游戏主循环中检查头部碰撞
+            
             return false;
         }
         
@@ -603,7 +576,7 @@
             const aiSelfCollided = checkAiSelfCollision();
             const headsCollided = checkHeadCollision();
             
-            // 游戏结束条件：玩家碰撞、电脑蛇自碰撞或头部相撞
+            // 游戏结束条件：玩家碰撞或头部相撞
             if (playerCollided || aiSelfCollided || headsCollided) {
                 endGame(playerCollided, aiSelfCollided, headsCollided);
                 return;
@@ -624,7 +597,6 @@
                 
                 // 隐藏开始和结束屏幕
                 hideScreen(startScreen);
-                hideScreen(resultScreen);
                 hideScreen(gameOverScreen);
                 
                 // 初始化游戏
@@ -671,7 +643,7 @@
             }
         }
         
-        // 结束游戏：先显示结算页面
+        // 结束游戏
         function endGame(playerCollided, aiSelfCollided, headsCollided) {
             isGameRunning = false;
             clearInterval(gameInterval);
@@ -679,9 +651,11 @@
             clearInterval(speedIncreaseInterval);
             startBtn.disabled = false;
             pauseBtn.disabled = true;
-
-            // 先显示结算页面（根据玩家分数展示对应图片）
-            showResultScreen(playerScore);
+            
+            // 显示游戏结束屏幕
+            finalPlayerScoreElement.textContent = playerScore;
+            finalAiScoreElement.textContent = aiScore;
+            showScreen(gameOverScreen);
         }
         
         // 处理方向控制
@@ -728,15 +702,6 @@
             }
         }
         
-        // 结算页面按钮：点击后显示游戏结束弹窗
-        toGameOverBtn.addEventListener('click', () => {
-            hideScreen(resultScreen);
-            // 显示游戏结束屏幕
-            finalPlayerScoreElement.textContent = playerScore;
-            finalAiScoreElement.textContent = aiScore;
-            showScreen(gameOverScreen);
-        });
-        
         // 事件监听
         document.addEventListener('keydown', handleKeyPress);
         startBtn.addEventListener('click', startGame);
@@ -775,5 +740,3 @@
     </script>
 </body>
 </html>
-
-
